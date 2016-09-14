@@ -1,0 +1,23 @@
+{
+  "name": "ejsexercise",
+  "version": "0.0.1",
+  "description": "none",
+  "main": "not sure yet",
+  "scripts": {
+    "test": "none"
+  },
+  "repository": {
+    "type": "git",
+    "url": "none"
+  },
+  "keywords": [
+    "none"
+  ],
+  "author": "EricCasey",
+  "license": "ISC",
+  "devDependencies": {
+    "body-parser": "^1.15.2",
+    "ejs": "^2.5.2",
+    "express": "^4.14.0"
+  }
+}
