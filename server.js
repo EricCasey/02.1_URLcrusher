@@ -1,13 +1,12 @@
 'use strict';
 // server.js
 // load the things we need
-var express = require('express');
-var app = express();
+let express = require('express');
+let app = express();
 
 const bodyParser = require("body-parser");
 
-
-var urlDatabase = {
+const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
   "2whg3g": "http://www.pornhub.com"
@@ -16,31 +15,45 @@ var urlDatabase = {
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
+// split body?  depricated.
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(__dirname + '/'))
 
 //index page
 app.get('/', function(req, res) {
-
     res.render('urls_index', {
         urls: urlDatabase
     });
 });
-
+// +++++   URL LIST PAGE  +++++++++
 // URL list page
-app.get("/urls", (req, res) => {
+app.get("/", (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
-});
-
-// setting up for the /new form
-app.get("/urls/new", (req, res) => {
- res.render("urls_new");
 });
 
 app.post("/urls", (req, res) => {
   console.log(req.body);  // debug statement to see POST parameters
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
+
+// +++++   FORM PAGE  +++++++++
+// setting up for the /new form
+app.get("/urls/new", (req, res) => {
+ res.render("urls_new");
+});
+
+
+// +++++   SOMETHING PAGE  +++++++++
+app.get("/u/:shortURL", (req, res) => {
+  let longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
+});
+// must have http://www.
+//
+
+
+
 
 // indiv
 app.get("/urls/:id", (req, res) => {
@@ -55,8 +68,6 @@ console.log('Server open on :8080');
 
 // http://localhost:8080/urls/b2xVn2
 
-
-
 function generateRandomString(len) {
     var text = " ";
     var charset = "abcdefghijklmnopqrstuvwxyz0123456789POIUYTREWQLKJHGFDSAMNBVCXZ";
@@ -64,4 +75,4 @@ function generateRandomString(len) {
         text += charset.charAt(Math.floor(Math.random() * charset.length));
     return text;
 }
-console.log(generateRandomString(6));
+// console.log(generateRandomString(6));

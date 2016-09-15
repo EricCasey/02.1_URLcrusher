@@ -1,0 +1,12 @@
+h1 {
+  text-decoration: underline;
+}
+
+p {
+  background-color: blue;
+}
+body {
+  height: 100%;
+  width: 100%;
+  background: none;
+}
