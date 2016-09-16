@@ -1,12 +1,66 @@
-h1 {
-  text-decoration: underline;
-}
-
-p {
-  background-color: blue;
+@font-face {
+    font-family: headerFont;
+    src: url(KGLikeASkyscraperBold.ttf);
 }
 body {
   height: 100%;
   width: 100%;
   background: none;
+  text-align:center;
+  font-family: headerFont;
+}
+.main {
+  border: solid green 3px;
+  border-radius: 10px;
+  max-width: 400px;
+  margin: 15% auto;
+  max-height: 500px;
+  overflow:hidden;
+}
+div.linkArea {
+  margin: 0 auto;
+  margin-top: 4px;
+}
+ul {
+  padding: 0;
+}
+li {
+  list-style: none;
+  margin: 0 auto;
+}
+
+div.tabs {
+  background:none;
+  width: 29%;
+  float:left;
+  margin: 0 2%;
+  margin-top: 12px;
+}
+nav {
+  background: black;
+  width: 100%;
+  color: white;
+  height: 55px;
+}
+nav a {
+  text-decoration:none;
+  color:white;
+}
+nav a:hover {
+  color:teal;
+}
+a.editLink {
+    text-decoration: none;
+}
+a.editLink:hover {
+  color: red;
+}
+button {
+
+  background: white;
+  border: 3px solid green;
+  border-radius: 5px;
+}
+button:hover {
+  background: teal;
 }

@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <% include partials/_header %>
-      <link rel="stylesheet" type="text/css" href="stylesheet.css">
+    <% include ../partials/_header.ejs %>
+          <link rel="stylesheet" type="text/css" href="/stylesheet.css">
   </head>
-  <body style="font-size:20px; padding:50px;">
+  <body>
 
-    <form action="/urls" method="POST" style="margin:150px;">
+<div class ="main">
+
+  <% include ../partials/_nav.ejs %>
+  <h1>Get New Url</h1>
+
+    <form action="/urls" method="POST" style="margin-bottom:15px;">
       <label for="longURL">Enter a URL:</label>
-      <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
+      <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 200px">
       <input type="submit" value="Submit">
     </form>
+
+</div>
 
   </body>
 </html>

@@ -2,19 +2,47 @@
 <html lang="en">
 <head>
   <% include ../partials/_header.ejs %>
-  <link rel="stylesheet" type="text/css" href="../../css/stylesheet.css">
+        <link rel="stylesheet" type="text/css" href="/stylesheet.css">
 </head>
 
 <body>
     <!-- Write EJS code here to display shortened links -->
+<div class="main">
 
-    <h1>URLs_show.ejs</h1>
+  <% include ../partials/_nav.ejs %>
+
+    <h1>shortURL Updater</h1>
 
     <ul>
           <li>
-              <a href="#"> http://localhost:8080/urls/<%= shortURL %> </a>
-          </li>
+              <p>
+              <a href="http://localhost:8080/u/<%= shortURL %>"> http://localhost:8080/u/<%= shortURL %> </a>
+<br />
+                <b>=</b>
+                <br />
+                <%= urls[shortURL] %>
+              </br/>
+              </p>
 
+              <form method="POST" action="/urls/<%= shortURL %>?_method=DELETE">
+                <input type="hidden" name="_method" value="DELETE">
+                <button type="submit">DELETE</button>
+              </form>
+
+              <form method="POST" action="/urls/<%= shortURL %>?_method=PUT">
+
+                <input type="hidden" name="_method" value="PUT">
+                <input type="text" name="thisinput" value="http://www.">
+                <button type="submit">UPDATE</button>
+              </form>
+
+
+          </li>
     </ul>
+
+    </div>
+
+
 </body>
+
 </html>

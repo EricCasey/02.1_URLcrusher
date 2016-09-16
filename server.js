@@ -1,12 +1,13 @@
 'use strict';
 // server.js
 // load the things we need
-let express = require('express');
-let app = express();
-
+const express = require('express');
+const app = express();
+const connect = require('connect');
+const methodOverride = require('method-override');
 const bodyParser = require("body-parser");
 
-const urlDatabase = {
+let urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
   "2whg3g": "http://www.pornhub.com"
@@ -14,28 +15,58 @@ const urlDatabase = {
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
-
 // split body?  depricated.
 app.use(bodyParser.urlencoded({ extended: true }));
+// set static directory for accessing css files
 app.use(express.static(__dirname + '/'))
+//
+app.use(methodOverride('_method'))
+
 
 //index page
-app.get('/', function(req, res) {
-    res.render('urls_index', {
-        urls: urlDatabase
-    });
+app.get('/', (req, res) => {
+  //  res.render('urls_index', {    urls: urlDatabase  });
+   res.render("urls_new");
 });
+
 // +++++   URL LIST PAGE  +++++++++
 // URL list page
-app.get("/", (req, res) => {
+app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
+
 app.post("/urls", (req, res) => {
   console.log(req.body);  // debug statement to see POST parameters
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  //res.send("Ok");
+  let templateVars = { shortURL: req.params.id , urls: urlDatabase };
+
+  let newID = generateRandomString(6);
+  console.log(newID)
+  res.render("urls_show", templateVars);
+
 });
+
+app.delete('/urls/:id', (req, res) => {
+
+  delete urlDatabase[req.params.id];
+  res.redirect('/urls');
+  console.log(`someone deleted ${req.params.id}`);
+
+});
+
+app.put('/urls/:id', (req, res) => {
+//replace(urlDatabase[req.params.id])
+let newID = generateRandomString(6);
+
+if (urlDatabase.hasOwnProperty(req.params.id)) {
+    urlDatabase[newID] = urlDatabase[req.params.id];
+    delete urlDatabase[req.params.id];
+}
+  res.redirect('/urls');
+});
+
 
 // +++++   FORM PAGE  +++++++++
 // setting up for the /new form
@@ -44,20 +75,19 @@ app.get("/urls/new", (req, res) => {
 });
 
 
-// +++++   SOMETHING PAGE  +++++++++
+// +++++   THIS REDIRECTS TO DESTINATION  +++++++++
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
+  console.log("Someone Used A Link!")
 });
 // must have http://www.
 //
 
 
-
-
 // indiv
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { shortURL: req.params.id };
+  let templateVars = { shortURL: req.params.id , urls: urlDatabase };
   res.render("urls_show", templateVars);
 });
 
