@@ -1,126 +1,159 @@
 'use strict';
-// server.js
-// load the things we need
+
 const express = require('express');
 const app = express();
 const connect = require('connect');
 const methodOverride = require('method-override');
 const bodyParser = require("body-parser");
+const chalk = require('chalk');
+const Reg = new RegExp(/(?:(?=[\s`!()\[\]{};:'".,<>?«»“”‘’])|\b)((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/|[a-z0-9.\-]+[.](?:com|org|net))(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))*(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]|\b))/ig);
 
-let urlDatabase = {
-    "b2xVn2": "http://www.lighthouselabs.ca",
-    "9sm5xK": "http://www.google.com",
-    "2whg3g": "http://www.pornhub.com"
-};
+const MongoClient = require(`mongodb`).MongoClient;
+const MONGODB_URI = "mongodb://127.0.0.1:27017/url_shortener";
+console.log(chalk.red(`MongoDB running at: ${MONGODB_URI}`));
 
-//
-// const MongoClient = require("mongodb").mongoClinet.
-// const MONGODB_URL = "";
-//
+let collection; // assigned to db.collection('urls') collection in MongoDB below
 
+MongoClient.connect(MONGODB_URI, (err, db) => {
+    if (err) {
+        console.log(`Could not connect! Unexpected error. Details below.`)
+        throw err;
+    }
+    collection = db.collection('urls');
+});
 
-
-// app.get("....", (req, res) => {
-//     Mongo.urls.find("e24e2w").toArray(function(err, result) {
-//         res.render("template_page", {
-//             url: result
-//         })
-//     });
-// });
-
-// set the view engine to ejs
 app.set('view engine', 'ejs');
-// split body?  depricated.
+
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-// set static directory for accessing css files
-app.use(express.static(__dirname + '/'))
-    //
-app.use(methodOverride('_method'))
 
+// set static directory
+app.use(express.static(__dirname + '/'));
 
-//index page
+app.use(methodOverride('_method'));
+
+// Home Page (Lander)
 app.get('/', (req, res) => {
-    //  res.render('urls_index', {    urls: urlDatabase  });
     res.render("urls_new");
 });
 
-// +++++   URL LIST PAGE  +++++++++
-// URL list page
+// GET /urls
 app.get("/urls", (req, res) => {
-    let templateVars = {
-        urls: urlDatabase
-    };
-    res.render("urls_index", templateVars);
+    collection.find().toArray((err, url) => {
+        res.render("urls_index", {
+            url: url
+        });
+    });
 });
 
-
+// create new link, add to database, redirect to /urls
 app.post("/urls", (req, res) => {
-    console.log(req.body); // debug statement to see POST parameters
-    let newID = generateRandomString(6);
-    console.log(newID)
-    urlDatabase[newID] = req.body.longURL;
-    res.redirect("/urls");
-
-});
-
-app.delete('/urls/:id', (req, res) => {
-    delete urlDatabase[req.params.id];
-    res.redirect('/urls');
-    console.log(`someone deleted ${req.params.id}`);
-});
-
-app.put('/urls/:id', (req, res) => {
-    //replace(urlDatabase[req.params.id])
-    let newID = generateRandomString(6);
-
-    if (urlDatabase.hasOwnProperty(req.params.id)) {
-        urlDatabase[newID] = urlDatabase[req.params.id];
-        delete urlDatabase[req.params.id];
+    var newID = generateRandomString(6);
+    if (Reg.test(req.body.thisinput)) {
+        collection.insert({
+            shortURL: newID,
+            longURL: req.body.thisinput
+        });
+        res.redirect("/urls");
+        console.log("someone created a new link with:" + newID)
+    } else {
+        // res.redirect("/urls");
+        console.log("invalidURL!")
     }
-    res.redirect('/urls');
 });
 
+// y u delete from database? redirects to /urls
+app.delete('/urls/:id', (req, res) => {
+    collection.remove({
+        shortURL: req.params.id
+    });
+    res.redirect('/urls');
+    console.log(`Someone deleted ${req.params.id}`);
+});
 
-// +++++   FORM PAGE  +++++++++
-// setting up for the /new form
+// update URL using same key
+app.put('/urls/:id', (req, res) => {
+    if (/www/i.test(req.body.thisinput)) {
+        var newID = generateRandomString(6);
+        collection.updateOne({
+            shortURL: req.params.id
+        }, {
+            shortURL: req.params.id,
+            longURL: `http://${req.body.thisinput}`
+        });
+        res.redirect("/urls");
+        console.log(`somebody changed ${req.params.id} to ${req.body.thisinput}`);
+    } else if (Reg.test(req.body.thisinput)) {
+        var newID = generateRandomString(6);
+        collection.updateOne({
+            shortURL: req.params.id
+        }, {
+            shortURL: req.params.id,
+            longURL: req.body.thisinput
+        });
+        res.redirect("/urls");
+        console.log(`somebody changed ${req.params.id} to ${req.ody.thisinput}`);
+    } else {
+        consoe.log("invalid url")
+        res.redirect("/urls");
+    }
+
+});
+
+// +++++++++++++   FORM PAGE  +++++++++++++
 app.get("/urls/new", (req, res) => {
     res.render("urls_new");
 });
 
 
-// +++++   THIS REDIRECTS TO DESTINATION  +++++++++
+
+
+
+
+// +++++   THIS REDIRECTS TO DESTINATION  +++++++
 app.get("/u/:shortURL", (req, res) => {
-    let longURL = urlDatabase[req.params.shortURL];
-    res.redirect(longURL);
-    console.log("Someone Used A Link!")
+    var longURL = collection.findOne({
+        shortURL: req.params.shortURL
+    }, (err, url) => {
+      console.log(req)
+      console.log("returned url: " + url)
+      console.log("error: " + err)
+      console.log("Someone Used A Link!");
+
+
+        res.redirect( 307, url.longURL );
+    });
+    // console.log(req.params.shortURL)
+    // console.log(longURL)
+    // console.log("Someone Used A Link!");
 });
-// must have http://www.
-//
 
 
-// indiv
-app.get("/urls/:id", (req, res) => {
-    let templateVars = {
-        shortURL: req.params.id,
-        urls: urlDatabase
-    };
-    res.render("urls_show", templateVars);
+
+
+
+
+// this shows a custom page for each record
+app.get("/urls/:id", function(req, res) {
+    collection.findOne({
+        shortURL: req.params.id
+    }, (err, urlb) => {
+        res.render("urls_show", {
+            urlb: urlb
+        });
+    });
 });
-
 
 app.listen(8080);
-console.log('Server open on :8080');
 
-
-// http://localhost:8080/urls/b2xVn2
+console.log(chalk.blue('Server open on :8080'));
 
 function generateRandomString(len) {
-    var text = " ";
+    var text = "";
     var charset = "abcdefghijklmnopqrstuvwxyz0123456789POIUYTREWQLKJHGFDSAMNBVCXZ";
-    for (var i = 0; i < len; i++)
+    for (var i = 0; i < len; i++) {
         text += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
     return text;
 }
-// console.log(generateRandomString(6));

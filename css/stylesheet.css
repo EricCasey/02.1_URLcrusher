@@ -2,24 +2,36 @@
     font-family: headerFont;
     src: url(KGLikeASkyscraperBold.ttf);
 }
+@font-face {
+    font-family: riesling;
+    src: url(riesling.ttf);
+}
+html {
+  height: 95%;
+}
 body {
-  height: 100%;
   width: 100%;
+  padding:0px;
   background: none;
   text-align:center;
   font-family: headerFont;
 }
 .main {
-  border: solid green 3px;
+  border: solid black 3px;
   border-radius: 10px;
+  width:100%;
   max-width: 400px;
   margin: 15% auto;
-  max-height: 500px;
   overflow:hidden;
+  box-shadow: 10px 10px 5px #888888;
 }
 div.linkArea {
   margin: 0 auto;
   margin-top: 4px;
+}
+h1 {
+  font-family: riesling;
+  font-size: 400%;
 }
 ul {
   padding: 0;
@@ -28,9 +40,8 @@ li {
   list-style: none;
   margin: 0 auto;
 }
-
 div.tabs {
-  background:none;
+  background:black;
   width: 29%;
   float:left;
   margin: 0 2%;
@@ -39,8 +50,10 @@ div.tabs {
 nav {
   background: black;
   width: 100%;
+  max-width:400px;
   color: white;
   height: 55px;
+  margin-top: 0px;
 }
 nav a {
   text-decoration:none;
@@ -48,19 +61,34 @@ nav a {
 }
 nav a:hover {
   color:teal;
+  background:blue;
 }
 a.editLink {
-    text-decoration: none;
+  text-decoration: none;
 }
 a.editLink:hover {
   color: red;
 }
+svg {
+  opacity: 0.4;
+  width: 50%;
+}
 button {
-
   background: white;
-  border: 3px solid green;
+  border: 3px solid black;
   border-radius: 5px;
 }
 button:hover {
   background: teal;
+}
+footer {
+  background: black;
+  position:relative;
+}
+footer a {
+  color: white;
+    text-decoration: none;
+}
+footer a:hover {
+  color: red;
 }

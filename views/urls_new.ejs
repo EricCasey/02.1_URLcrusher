@@ -2,19 +2,18 @@
 <html lang="en">
   <head>
     <% include ../partials/_header.ejs %>
-          <link rel="stylesheet" type="text/css" href="/stylesheet.css">
   </head>
   <body>
 
 <div class ="main">
 
   <% include ../partials/_nav.ejs %>
-  <h1>Get New Url</h1>
+  <h1>Make A New Url</h1>
 
     <form action="/urls" method="POST" style="margin-bottom:15px;">
-      <label for="longURL">Enter a URL:</label>
-      <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 200px">
-      <input type="submit" value="Submit">
+      <label for="longURL">Paste a URL:</label><br />
+      <input id="longURL" type="text" name="thisinput" placeholder="http://" style="width: 200px"><br />
+      <input type="submit" value="Sasdfhubmit">
     </form>
 
 </div>

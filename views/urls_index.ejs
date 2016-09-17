@@ -3,32 +3,41 @@
 
 <head>
     <% include ../partials/_header.ejs %>
-        <link rel="stylesheet" type="text/css" href="/stylesheet.css">
 </head>
 
 <body>
-<section class="main">
-  <% include ../partials/_nav.ejs %>
-    <h1>Your Links!</h1>
+    <section class="main">
+        <% include ../partials/_nav.ejs %>
+            <h1>Recent URLs</h1>
 
-    <ul>
-        <% for(key in urls) { %>
-          <div class="linkArea">
+            <ul>
+                <% url.reverse().forEach( (url) => {  %>
+                    <div class="linkArea">
 
-            <li>
-                Edit Link: <a class="editLink" href="/urls/<%= key %>"><%= key %></a> <br>
-                    <%= urls[key] %>
-            </li>
+                        <li>
+                            Edit:
+                            <a class="editLink" href="/urls/<%= url.shortURL %>">
+                                <%= url.shortURL %>
+                            </a> <br>
+                            <%= url.longURL %>
+                        </li>
 
-            <form method="POST" action="/urls/<%= key %>?_method=DELETE">
-              <input type="hidden" name="_method" value="DELETE">
-              <button type="submit">DELETE</button>
-            </form>
-                </div>
-            <% }; %>
-    </ul>
+                        <form method="POST" action="/urls/<%= url.shortURL %>?_method=DELETE">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit">DELETE :(</button>
+                        </form>
 
-</section>
+                        <% include ../svg/1410437311.svg %>
+
+                    </div>
+
+                    <% }); %>
+
+            </ul>
+
+            <% include ../partials/_footer.ejs %>
+
+    </section>
 
 </body>
 

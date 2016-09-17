@@ -2,34 +2,33 @@
 <html lang="en">
 <head>
   <% include ../partials/_header.ejs %>
-        <link rel="stylesheet" type="text/css" href="/stylesheet.css">
 </head>
-
 <body>
-    <!-- Write EJS code here to display shortened links -->
+
 <div class="main">
 
   <% include ../partials/_nav.ejs %>
 
-    <h1>shortURL Updater</h1>
+    <h1>Update A URL</h1>
 
     <ul>
           <li>
               <p>
-              <a href="http://localhost:8080/u/<%= shortURL %>"> http://localhost:8080/u/<%= shortURL %> </a>
-<br />
-                <b>=</b>
-                <br />
-                <%= urls[shortURL] %>
-              </br/>
+              <a href="http://localhost:8080/u/<%=urlb.shortURL %>"><h3>/u/<%= urlb.shortURL %> </h3></a>
+
+                </b>goes to</b>
+                <br/>
+
+                <%= urlb.longURL %>
+              <br/>
               </p>
 
-              <form method="POST" action="/urls/<%= shortURL %>?_method=DELETE">
+              <form method="POST" action="/urls/<%= urlb.shortURL %>?_method=DELETE">
                 <input type="hidden" name="_method" value="DELETE">
-                <button type="submit">DELETE</button>
+                <button type="submit">DELETE :(</button>
               </form>
 
-              <form method="POST" action="/urls/<%= shortURL %>?_method=PUT">
+              <form method="POST" action="/urls/<%= urlb.shortURL %>?_method=PUT">
 
                 <input type="hidden" name="_method" value="PUT">
                 <input type="text" name="thisinput" value="http://www.">
